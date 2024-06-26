@@ -108,7 +108,12 @@ const serviceIsSuspended = computed<boolean>(() => {
     ) && departures.value.length === 0
   )
 })
-
+// const hasDisruptions = computed(() => disruptions.value.length > 0)
+const hasDisruptions = ref(false)
+useIntervalFn(() => {
+  let val = hasDisruptions.value
+  hasDisruptions.value = !val
+}, 4_000)
 useIntervalFn(async () => {
   await updateDepartures()
 }, 61 * 1000)
@@ -134,7 +139,7 @@ onMounted(async () => {
     ></Header>
     <SuspendedService v-if="serviceIsSuspended"></SuspendedService>
     <EmptyState v-else-if="departures.length === 0"></EmptyState>
-    <div class="withDisruptions" v-else>
+    <div :class="['withDisruptions', { noDisruptions: !hasDisruptions }]">
       <TransitionGroup
         tag="section"
         name="horizontal"
@@ -156,7 +161,7 @@ onMounted(async () => {
           :key="departure.id"
         ></DepartureRow>
       </TransitionGroup>
-      <Slider :disruptions="disruptions"></Slider>
+      <Slider v-if="hasDisruptions" :disruptions="disruptions"></Slider>
     </div>
   </main>
 </template>
@@ -227,6 +232,11 @@ article time {
 .withDisruptions {
   height: 100%;
   display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.withDisruptions.noDisruptions {
   grid-template-columns: 1fr;
   grid-template-rows: 1fr;
 }
