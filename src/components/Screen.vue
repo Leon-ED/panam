@@ -108,7 +108,7 @@ const serviceIsSuspended = computed<boolean>(() => {
     ) && departures.value.length === 0
   )
 })
-const hasDisruptions = computed(() => disruptions.value.length > 0)
+const hasDisruptions = computed(() => disruptions.value.length > 0 && !serviceIsSuspended && departures.value.length > 0)
 
 useIntervalFn(async () => {
   await updateDepartures()
