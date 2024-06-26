@@ -108,12 +108,8 @@ const serviceIsSuspended = computed<boolean>(() => {
     ) && departures.value.length === 0
   )
 })
-// const hasDisruptions = computed(() => disruptions.value.length > 0)
-const hasDisruptions = ref(false)
-useIntervalFn(() => {
-  let val = hasDisruptions.value
-  hasDisruptions.value = !val
-}, 4_000)
+const hasDisruptions = computed(() => disruptions.value.length > 0)
+
 useIntervalFn(async () => {
   await updateDepartures()
 }, 61 * 1000)
